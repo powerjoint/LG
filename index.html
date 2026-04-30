@@ -2,647 +2,321 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="HF Analyse" />
-  <title>HF Analyse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HF Analyse – Vorübergehend deaktiviert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0e0f13;
-      --surface: #16181f;
-      --surface2: #1e2029;
-      --border: #2e3140;
-      --text: #eceef5;
-      --muted: #8890a8;
+      --bg: #0f1117;
+      --surface: #181c27;
+      --border: #252a38;
       --accent: #4fffb0;
-      --accent3: #ffd166;
-      --accent4: #4fc3f7;
-      --ga1: #4fffb0;
-      --ga12: #ffd166;
-      --ga2: #ff9a3c;
-      --red: #ff6b6b;
-      --radius: 14px;
-      --font: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      --accent-dim: rgba(79,255,176,0.12);
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --warning: #f59e0b;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: var(--font);
       background: var(--bg);
       color: var(--text);
-      min-height: 100dvh;
-      padding-top: max(env(safe-area-inset-top), 16px);
-      padding-bottom: max(env(safe-area-inset-bottom), 32px);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    .app { max-width: 500px; margin: 0 auto; padding: 20px 16px 48px; }
-
-    header { text-align: center; margin-bottom: 24px; }
-    header .eyebrow {
-      font-size: 12px; letter-spacing: 0.18em; color: var(--accent);
-      text-transform: uppercase; font-weight: 600; margin-bottom: 4px;
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79,255,176,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,255,176,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
     }
-    header h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
-    header h1 span { color: var(--accent); }
-    header .subtitle {
-      font-size: 13px; font-weight: 500; color: var(--muted);
-      margin-top: 6px; letter-spacing: 0.03em;
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      animation: fadeIn 0.8s ease both;
     }
 
-    .section {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Status badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.3);
+      color: var(--warning);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 2rem;
+      width: fit-content;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--warning);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* Header */
+    .header-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      color: #fff;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      margin-top: 0.6rem;
+      color: var(--muted);
+      font-weight: 300;
+      font-size: 1rem;
+    }
+
+    /* Screenshot card */
+    .screenshot-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px 16px;
-      margin-bottom: 14px;
-    }
-    .section-title {
-      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted);
-      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-    }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--accent); flex-shrink: 0; display: inline-block;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(79,255,176,0.06), 0 24px 48px rgba(0,0,0,0.4);
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .screenshot-card::before {
+      content: 'Vorschau der App';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      background: rgba(15,17,23,0.85);
+      backdrop-filter: blur(8px);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
+    }
 
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field > label { font-size: 14px; font-weight: 600; color: var(--muted); }
+    .screenshot-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      opacity: 0.6;
+      filter: grayscale(20%);
+      margin-top: 2rem; /* space for the label bar */
+    }
 
-    input[type="number"] {
-      background: var(--surface2);
-      border: 2px solid var(--border);
-      border-radius: 10px;
+    /* Overlay on screenshot */
+    .screenshot-overlay {
+      position: absolute;
+      inset: 2rem 0 0 0;
+      background: linear-gradient(to bottom, transparent 30%, var(--bg) 100%);
+      pointer-events: none;
+    }
+
+    /* Info card */
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .info-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .info-card p strong {
       color: var(--text);
-      font-family: var(--font);
-      font-size: 24px; font-weight: 600;
-      padding: 11px 13px; width: 100%;
-      outline: none; -webkit-appearance: none; appearance: none;
+      font-weight: 500;
     }
-    input[type="number"]:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79,255,176,0.13);
-    }
-    input[type="number"].auto-filled {
-      border-color: rgba(79,255,176,0.4);
-      color: var(--accent);
-    }
-    input[type="number"]::placeholder { color: var(--border); }
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type=number] { -moz-appearance: textfield; }
 
-    /* Karvonen info box */
-    .karvonen-box {
-      background: var(--surface2);
+    /* Contact block */
+    .contact-block {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--accent-dim);
       border: 1px solid rgba(79,255,176,0.2);
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-top: 14px;
-      display: none;
-    }
-    .karvonen-box.visible { display: block; }
-    .karvonen-title {
-      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
-    }
-    .karvonen-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 5px 0; border-bottom: 1px solid var(--border);
-      font-size: 14px;
-    }
-    .karvonen-row:last-child { border-bottom: none; }
-    .karvonen-row .kr-label { color: var(--muted); font-weight: 500; }
-    .karvonen-row .kr-val { font-weight: 700; font-size: 16px; }
-    .karvonen-row .kr-range { color: var(--muted); font-size: 13px; }
-    .karvonen-formula {
-      font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.5;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-top: 0.5rem;
     }
 
-    /* Round fields */
-    .round-field {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--surface2); border: 2px solid var(--border);
-      border-radius: 10px; padding: 10px 14px; margin-bottom: 10px;
-    }
-    .round-field:last-child { margin-bottom: 0; }
-    .round-field:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79,255,176,0.13);
-    }
-    .round-label { flex-shrink: 0; width: 86px; }
-    .round-label .rl-top { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
-    .round-label .rl-sub { font-size: 13px; color: var(--muted); line-height: 1.3; margin-top: 2px; }
-    .round-field input {
-      background: transparent; border: none; border-radius: 0;
-      padding: 0; font-size: 28px; font-weight: 600;
-      flex: 1; min-width: 0; box-shadow: none !important; outline: none;
-    }
-    .zone-badge {
-      font-size: 13px; font-weight: 700; padding: 4px 10px;
-      border-radius: 20px; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.04em;
+    .contact-icon {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      background: rgba(79,255,176,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* Buttons */
-    .btn-analyze {
-      width: 100%; padding: 18px; background: var(--accent); color: #0d0f14;
-      border: none; border-radius: var(--radius); font-family: var(--font);
-      font-size: 18px; font-weight: 800; letter-spacing: 0.03em;
-      cursor: pointer; margin-top: 4px; -webkit-appearance: none; appearance: none;
+    .contact-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
-    .btn-analyze:active { opacity: 0.8; }
-    .btn-reset {
-      width: 100%; padding: 14px; background: transparent; color: var(--muted);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      font-family: var(--font); font-size: 15px; font-weight: 600;
-      cursor: pointer; margin-top: 10px; -webkit-appearance: none; appearance: none;
-    }
-    .btn-reset:active { opacity: 0.7; }
-    .save-hint { text-align: center; font-size: 13px; color: var(--accent); margin-top: 8px; min-height: 20px; }
 
-    /* Results */
-    #results { display: none; margin-top: 14px; }
-    .result-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 18px 16px; margin-bottom: 12px;
+    .contact-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
     }
-    .result-card h3 {
-      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .zone-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 0; border-bottom: 1px solid var(--border);
-    }
-    .zone-row:last-of-type { border-bottom: none; }
-    .zone-row .zr-label { font-size: 15px; color: var(--muted); flex: 1; font-weight: 500; }
-    .zone-row .zr-val { font-size: 20px; font-weight: 700; }
-    .zone-row .tag { font-size: 13px; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
-    .hf-bar-track { height: 5px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin: 2px 0 6px; }
-    .hf-bar-fill { height: 100%; border-radius: 99px; }
 
-    .erholung-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
-    .erholung-card { background: var(--surface2); border-radius: 10px; padding: 12px 8px; text-align: center; }
-    .erholung-card .ec-min { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-    .erholung-card .ec-val { font-size: 26px; font-weight: 700; }
-    .erholung-card .ec-drop { font-size: 14px; font-weight: 600; margin-top: 2px; }
-    .erholung-card .ec-bew { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .summary-box { background: var(--surface2); border-radius: 10px; padding: 14px; font-size: 15px; line-height: 1.65; color: var(--text); }
+    .contact-text span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
 
-    /* Colors */
-    .c-green { color: var(--ga1); } .c-yellow { color: var(--ga12); }
-    .c-orange { color: var(--ga2); } .c-red { color: var(--red); }
-    .c-blue { color: var(--accent4); } .c-muted { color: var(--muted); }
-    .bg-green { background: rgba(79,255,176,0.15); color: var(--ga1); }
-    .bg-yellow { background: rgba(255,209,102,0.15); color: var(--ga12); }
-    .bg-orange { background: rgba(255,154,60,0.15); color: var(--ga2); }
-    .bg-red { background: rgba(255,107,107,0.15); color: var(--red); }
-    .bg-blue { background: rgba(79,195,247,0.15); color: var(--accent4); }
-    .bg-muted { background: rgba(107,112,128,0.18); color: var(--muted); }
+    /* Anti-spam: E-Mail aus JS zusammenbauen, kein mailto-Link im HTML */
+    .contact-email {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.92rem;
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: rgba(79,255,176,0.3);
+      text-underline-offset: 3px;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    .contact-email:hover {
+      text-decoration-color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: #2e3340;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body>
-<div class="app">
 
-  <header>
-    <div class="eyebrow">Trainingssteuerung</div>
+<div class="container">
+
+  <div>
+    <div class="badge"><span class="badge-dot"></span> Vorübergehend offline</div>
+  </div>
+
+  <div>
+    <div class="header-label">Trainingssteuerung</div>
     <h1>HF <span>Analyse</span></h1>
-    <div class="subtitle">Lehrergesundheit – Fit im Schulalltag</div>
-  </header>
-
-  <!-- BLOCK 0: Persönliche Daten -->
-  <div class="section">
-    <div class="section-title"><span class="dot" style="background:var(--accent4)"></span>Persönliche Daten</div>
-    <div class="grid-2">
-      <div class="field">
-        <label>Lebensalter</label>
-        <input type="number" id="alter" placeholder="45" inputmode="numeric" />
-      </div>
-      <div class="field">
-        <label>Ruhepuls (bpm)</label>
-        <input type="number" id="ruhe" placeholder="52" inputmode="numeric" />
-      </div>
-    </div>
-
-    <!-- Karvonen Ergebnis -->
-    <div class="karvonen-box" id="karvonen-box">
-      <div class="karvonen-title">⚡ Berechnete Trainingszonen (Karvonen)</div>
-      <div class="karvonen-row">
-        <span class="kr-label">Max HF</span>
-        <span class="kr-val" id="kv-maxhf">—</span>
-        <span class="kr-range">220 − Alter</span>
-      </div>
-      <div class="karvonen-row">
-        <span class="kr-label">HF-Reserve</span>
-        <span class="kr-val" id="kv-hfr">—</span>
-        <span class="kr-range">Max − Ruhe</span>
-      </div>
-      <div class="karvonen-row" style="margin-top:4px">
-        <span class="kr-label">GA1-Zone</span>
-        <span class="kr-val c-green" id="kv-ga1">—</span>
-        <span class="kr-range" id="kv-ga1-range">60–70% HFR</span>
-      </div>
-      <div class="karvonen-row">
-        <span class="kr-label">GA½-Zone</span>
-        <span class="kr-val c-yellow" id="kv-ga12">—</span>
-        <span class="kr-range" id="kv-ga12-range">70–80% HFR</span>
-      </div>
-      <div class="karvonen-formula" id="kv-formula"></div>
-    </div>
+    <p class="subtitle">Lehrergesundheit – Fit im Schulalltag</p>
   </div>
 
-  <!-- BLOCK 1: Basisdaten (auto-befüllt) -->
-  <div class="section">
-    <div class="section-title"><span class="dot"></span>Basisdaten <span style="font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--accent);margin-left:4px">↑ automatisch berechnet</span></div>
-    <div class="grid-2">
-      <div class="field">
-        <label>Ruhepuls (bpm)</label>
-        <input type="number" id="ruhe2" placeholder="—" inputmode="numeric" readonly style="opacity:0.6;cursor:default" />
-      </div>
-      <div class="field">
-        <label>Max HF (bpm)</label>
-        <input type="number" id="maxhf" placeholder="—" inputmode="numeric" />
-      </div>
-      <div class="field">
-        <label>GA1 HF (bpm)</label>
-        <input type="number" id="ga1hf" placeholder="—" inputmode="numeric" />
-      </div>
-      <div class="field">
-        <label>GA½ HF (bpm)</label>
-        <input type="number" id="ga12hf" placeholder="—" inputmode="numeric" />
-      </div>
-    </div>
-    <p style="font-size:12px;color:var(--muted);margin-top:10px">Die Werte werden automatisch berechnet, können aber manuell überschrieben werden.</p>
+  <div class="screenshot-card">
+    <img src="screenshot.jpg" alt="Screenshot der HF-Analyse-App" />
+    <div class="screenshot-overlay"></div>
   </div>
 
-  <!-- BLOCK 2: Belastungspuls -->
-  <div class="section">
-    <div class="section-title"><span class="dot" style="background:var(--accent3)"></span>Belastungspuls</div>
-    <div class="round-field">
-      <div class="round-label"><div class="rl-top">Runde 1</div><div class="rl-sub">5 min Gehen</div></div>
-      <input type="number" id="r1" placeholder="—" inputmode="numeric" />
-      <span class="zone-badge bg-muted" id="badge-r1">—</span>
-    </div>
-    <div class="round-field">
-      <div class="round-label"><div class="rl-top">Runde 2</div><div class="rl-sub">10 min GA1</div></div>
-      <input type="number" id="r2" placeholder="—" inputmode="numeric" />
-      <span class="zone-badge bg-green" id="badge-r2">—</span>
-    </div>
-    <div class="round-field">
-      <div class="round-label"><div class="rl-top">Runde 3</div><div class="rl-sub">5 min GA 1/2</div></div>
-      <input type="number" id="r3" placeholder="—" inputmode="numeric" />
-      <span class="zone-badge bg-orange" id="badge-r3">—</span>
-    </div>
-    <div class="round-field">
-      <div class="round-label"><div class="rl-top">Runde 4</div><div class="rl-sub">10 min GA 1</div></div>
-      <input type="number" id="r4" placeholder="—" inputmode="numeric" />
-      <span class="zone-badge bg-orange" id="badge-r4">—</span>
-    </div>
-    <div class="round-field">
-      <div class="round-label"><div class="rl-top">Runde 5</div><div class="rl-sub">5 min GA 1/2</div></div>
-      <input type="number" id="r5" placeholder="—" inputmode="numeric" />
-      <span class="zone-badge bg-yellow" id="badge-r5">—</span>
-    </div>
-  </div>
-
-  <!-- BLOCK 3: Erholungspuls -->
-  <div class="section">
-    <div class="section-title"><span class="dot" style="background:var(--accent4)"></span>Erholungspuls</div>
-    <div class="grid-3">
-      <div class="field">
-        <label>Nach 1 Min</label>
-        <input type="number" id="erh1" placeholder="—" inputmode="numeric" />
+  <div class="info-card">
+    <p>
+      Diese Web-App steht <strong>derzeit nicht zur Verfügung</strong>. 
+      Wenn Sie Interesse haben, die App wieder nutzen zu möchten, 
+      wenden Sie sich gerne direkt an mich – ich kann sie bei Bedarf wieder aktivieren.
+    </p>
+    <div class="contact-block">
+      <div class="contact-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
       </div>
-      <div class="field">
-        <label>Nach 2 Min</label>
-        <input type="number" id="erh2" placeholder="—" inputmode="numeric" />
-      </div>
-      <div class="field">
-        <label>Nach 3 Min</label>
-        <input type="number" id="erh3" placeholder="—" inputmode="numeric" />
+      <div class="contact-text">
+        <span>Kontakt</span>
+        <button class="contact-email" id="mailBtn" onclick="openMail()">E-Mail laden…</button>
       </div>
     </div>
   </div>
 
-  <button class="btn-analyze" onclick="analyze()">Auswerten →</button>
-  <button class="btn-reset" onclick="resetAll()">Alle Werte löschen</button>
-  <p class="save-hint" id="save-hint"></p>
-
-  <!-- RESULTS -->
-  <div id="results">
-    <div class="result-card">
-      <h3><span class="dot" style="background:var(--accent)"></span>Zoneneinordnung Belastung</h3>
-      <div id="zone-rows"></div>
-    </div>
-    <div class="result-card">
-      <h3><span class="dot" style="background:var(--accent4)"></span>Erholungsanalyse</h3>
-      <div class="erholung-grid" id="erholung-grid"></div>
-      <div class="summary-box" id="erholung-summary"></div>
-    </div>
-    <div class="result-card">
-      <h3><span class="dot" style="background:var(--accent3)"></span>Gesamtbewertung</h3>
-      <div class="summary-box" id="gesamt-summary"></div>
-    </div>
-  </div>
+  <footer>© Frank Steyer &nbsp;·&nbsp; HF Analyse</footer>
 
 </div>
+
 <script>
-  const FIELDS = ['alter','ruhe','maxhf','ga1hf','ga12hf','r1','r2','r3','r4','r5','erh1','erh2','erh3'];
-  const KEY = 'hf_analyse_v2';
-
-  // ── KARVONEN BERECHNUNG ───────────────────────────────────
-  function karvonen(pct, ruhe, maxhf) {
-    return Math.round(ruhe + pct * (maxhf - ruhe));
-  }
-
-  function recalcKarvonen() {
-    const alter = +document.getElementById('alter').value;
-    const ruhe  = +document.getElementById('ruhe').value;
-    const box   = document.getElementById('karvonen-box');
-
-    if (!alter || !ruhe) { box.classList.remove('visible'); return; }
-
-    const maxhf = 220 - alter;
-    const hfr   = maxhf - ruhe;
-
-    // Zonengrenzen
-    const ga1_low  = karvonen(0.60, ruhe, maxhf);
-    const ga1_high = karvonen(0.70, ruhe, maxhf);
-    const ga1_mid  = karvonen(0.65, ruhe, maxhf);
-    const ga12_low  = karvonen(0.70, ruhe, maxhf);
-    const ga12_high = karvonen(0.80, ruhe, maxhf);
-    const ga12_mid  = karvonen(0.75, ruhe, maxhf);
-
-    // Info-Box befüllen
-    document.getElementById('kv-maxhf').textContent = maxhf + ' bpm';
-    document.getElementById('kv-hfr').textContent   = hfr   + ' bpm';
-    document.getElementById('kv-ga1').textContent   = ga1_low + '–' + ga1_high + ' bpm';
-    document.getElementById('kv-ga12').textContent  = ga12_low + '–' + ga12_high + ' bpm';
-    document.getElementById('kv-formula').textContent =
-      'Formel: Ruhepuls + (% × HF-Reserve) | HF-Reserve = ' + maxhf + ' − ' + ruhe + ' = ' + hfr;
-
-    box.classList.add('visible');
-
-    // Basisdaten-Felder auto-befüllen (nur wenn noch nicht manuell geändert)
-    setAutoField('ruhe2',  ruhe);
-    setAutoField('maxhf',  maxhf);
-    setAutoField('ga1hf',  ga1_mid);
-    setAutoField('ga12hf', ga12_mid);
-
-    updateAllBadges();
-    saveAll();
-  }
-
-  function setAutoField(id, val) {
-    const el = document.getElementById(id);
-    // Nur überschreiben wenn leer oder bereits auto-befüllt
-    if (!el.dataset.manualEdit) {
-      el.value = val;
-      el.classList.add('auto-filled');
-    }
-  }
-
-  // Manuelle Änderung an Basisdaten merken
-  ['maxhf','ga1hf','ga12hf'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function() {
-      this.dataset.manualEdit = '1';
-      this.classList.remove('auto-filled');
-      updateAllBadges();
-      saveAll();
-    });
-  });
-
-  // ── STORAGE ───────────────────────────────────────────────
-  function saveAll() {
-    const d = {};
-    FIELDS.forEach(id => { d[id] = document.getElementById(id).value; });
-    // Auch manuelle Overrides merken
-    ['maxhf','ga1hf','ga12hf'].forEach(id => {
-      d[id + '_manual'] = document.getElementById(id).dataset.manualEdit || '';
-    });
-    try { localStorage.setItem(KEY, JSON.stringify(d)); } catch(e){}
-    document.getElementById('save-hint').textContent = '💾 Werte gespeichert';
-  }
-
-  function loadAll() {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (!raw) return;
-      const d = JSON.parse(raw);
-      FIELDS.forEach(id => { if (d[id]) document.getElementById(id).value = d[id]; });
-      ['maxhf','ga1hf','ga12hf'].forEach(id => {
-        if (d[id + '_manual']) {
-          document.getElementById(id).dataset.manualEdit = '1';
-          document.getElementById(id).classList.remove('auto-filled');
-        } else if (d[id]) {
-          document.getElementById(id).classList.add('auto-filled');
-        }
-      });
-      if (d['ruhe2']) document.getElementById('ruhe2').value = d['ruhe2'];
-      recalcKarvonen();
-      updateAllBadges();
-      if (FIELDS.some(id => d[id])) document.getElementById('save-hint').textContent = '💾 Werte gespeichert';
-    } catch(e){}
-  }
-
-  function resetAll() {
-    if (!confirm('Alle Werte wirklich löschen?')) return;
-    FIELDS.forEach(id => {
-      const el = document.getElementById(id);
-      el.value = '';
-      delete el.dataset.manualEdit;
-      el.classList.remove('auto-filled');
-    });
-    document.getElementById('ruhe2').value = '';
-    document.getElementById('karvonen-box').classList.remove('visible');
-    try { localStorage.removeItem(KEY); } catch(e){}
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('save-hint').textContent = '';
-    updateAllBadges();
-  }
-
-  // ── INPUT LISTENERS ───────────────────────────────────────
-  ['alter','ruhe'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      recalcKarvonen();
-      saveAll();
-    });
-  });
-
-  ['r1','r2','r3','r4','r5'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      updateBadge(id);
-      saveAll();
-    });
-  });
-
-  ['erh1','erh2','erh3'].forEach(id => {
-    document.getElementById(id).addEventListener('input', saveAll);
-  });
-
-  // ── ZONES ─────────────────────────────────────────────────
-  function getZone(hf, ruhe, maxhf, ga1, ga12) {
-    if (!hf || !maxhf) return null;
-    const pct = (hf - ruhe) / (maxhf - ruhe) * 100;
-    if (hf < ga1 - 10) return { short: 'REGEN', cls: 'bg-blue',   color: 'c-blue',   pct };
-    if (hf < ga1)      return { short: 'GA1–',  cls: 'bg-green',  color: 'c-green',  pct };
-    if (hf < ga12)     return { short: 'GA1',   cls: 'bg-green',  color: 'c-green',  pct };
-    if (hf < ga12 + (maxhf - ga12) * 0.4)
-                       return { short: 'GA½',   cls: 'bg-yellow', color: 'c-yellow', pct };
-    if (hf < maxhf-10) return { short: 'GA2',   cls: 'bg-orange', color: 'c-orange', pct };
-    return             { short: 'MAX',   cls: 'bg-red',    color: 'c-red',    pct };
-  }
-
-  function updateBadge(id) {
-    const ruhe  = +document.getElementById('ruhe').value   || 0;
-    const maxhf = +document.getElementById('maxhf').value  || 0;
-    const ga1   = +document.getElementById('ga1hf').value  || 0;
-    const ga12  = +document.getElementById('ga12hf').value || 0;
-    const hf    = +document.getElementById(id).value;
-    const badge = document.getElementById('badge-' + id);
-    if (!hf || !ga1 || !ga12) { badge.textContent = '—'; return; }
-    const z = getZone(hf, ruhe, maxhf, ga1, ga12);
-    if (z) { badge.textContent = z.short; badge.className = 'zone-badge ' + z.cls; }
-  }
-
-  function updateAllBadges() {
-    ['r1','r2','r3','r4','r5'].forEach(updateBadge);
-  }
-
-  function barColor(z) {
-    if (!z) return 'var(--muted)';
-    if (z.cls.includes('green'))  return 'var(--ga1)';
-    if (z.cls.includes('yellow')) return 'var(--ga12)';
-    if (z.cls.includes('orange')) return 'var(--ga2)';
-    if (z.cls.includes('red'))    return 'var(--red)';
-    return 'var(--accent4)';
-  }
-
-  // ── ANALYSE ───────────────────────────────────────────────
-  function analyze() {
-    const ruhe  = +document.getElementById('ruhe').value   || 50;
-    const maxhf = +document.getElementById('maxhf').value;
-    const ga1   = +document.getElementById('ga1hf').value;
-    const ga12  = +document.getElementById('ga12hf').value;
-    if (!maxhf || !ga1 || !ga12) { alert('Bitte zuerst Alter und Ruhepuls eingeben.'); return; }
-
-    const rounds = [
-      { id:'r1', label:'R1 – Gehen' },
-      { id:'r2', label:'R2 – GA1'   },
-      { id:'r3', label:'R3 – GA 1/2' },
-      { id:'r4', label:'R4 – GA 1'   },
-      { id:'r5', label:'R5 – GA 1/2' },
-    ];
-
-    const zoneRows = document.getElementById('zone-rows');
-    zoneRows.innerHTML = '';
-    let lastHF = 0;
-
-    rounds.forEach(r => {
-      const hf = +document.getElementById(r.id).value;
-      if (!hf) return;
-      lastHF = hf;
-      const z = getZone(hf, ruhe, maxhf, ga1, ga12);
-      const pct = Math.min(100, Math.max(0, ((hf-ruhe)/(maxhf-ruhe))*100));
-      const wrap = document.createElement('div');
-      wrap.innerHTML = `
-        <div class="zone-row">
-          <div class="zr-label">${r.label}</div>
-          <div class="zr-val ${z?z.color:''}">${hf}</div>
-          <span class="tag ${z?z.cls:'bg-muted'}">${z?z.short:'—'}</span>
-        </div>
-        <div class="hf-bar-track"><div class="hf-bar-fill" style="width:${pct.toFixed(1)}%;background:${barColor(z)}"></div></div>
-      `;
-      zoneRows.appendChild(wrap);
-    });
-
-    const erh1 = +document.getElementById('erh1').value;
-    const erh2 = +document.getElementById('erh2').value;
-    const erh3 = +document.getElementById('erh3').value;
-    const erholungGrid = document.getElementById('erholung-grid');
-    erholungGrid.innerHTML = '';
-
-    const erholungData = [
-      { min: 'Nach 1 Min', val: erh1 },
-      { min: 'Nach 2 Min', val: erh2 },
-      { min: 'Nach 3 Min', val: erh3 },
-    ];
-
-    erholungData.forEach((e, i) => {
-      if (!e.val) return;
-      const drop     = lastHF > 0 ? lastHF - e.val : null;
-      const dropPrev = i > 0 && erholungData[i-1].val ? erholungData[i-1].val - e.val : null;
-      let dropCls = 'c-muted', bewertung = '';
-      if (i === 0 && drop !== null) {
-        if (drop >= 25)      { dropCls = 'c-green';  bewertung = 'Sehr gut'; }
-        else if (drop >= 15) { dropCls = 'c-yellow'; bewertung = 'Gut'; }
-        else                 { dropCls = 'c-red';    bewertung = 'Ausbaufähig'; }
-      } else if (dropPrev !== null) {
-        if (dropPrev >= 15)     { dropCls = 'c-green';  bewertung = 'Sehr gut'; }
-        else if (dropPrev >= 8) { dropCls = 'c-yellow'; bewertung = 'Gut'; }
-        else                    { dropCls = 'c-muted';  bewertung = 'Normal'; }
-      }
-      const card = document.createElement('div');
-      card.className = 'erholung-card';
-      card.innerHTML = `
-        <div class="ec-min">${e.min}</div>
-        <div class="ec-val">${e.val}</div>
-        ${drop !== null ? `<div class="ec-drop ${dropCls}">↓ ${drop} bpm</div>` : ''}
-        <div class="ec-bew">${bewertung}</div>
-      `;
-      erholungGrid.appendChild(card);
-    });
-
-    const erholungSummary = document.getElementById('erholung-summary');
-    if (erh1 && lastHF) {
-      const d1 = lastHF - erh1;
-      let txt = d1 >= 25
-        ? `✅ Sehr gute Erholung: −${d1} bpm nach 1 Min. Zeigt gute aerobe Fitness.`
-        : d1 >= 15
-          ? `🟡 Gute Erholung: −${d1} bpm nach 1 Min. Ausbaufähig mit mehr GA1-Umfang.`
-          : `🔴 Langsame Erholung: −${d1} bpm nach 1 Min. Hinweis auf Erschöpfung oder Entwicklungspotenzial.`;
-      if (erh3 && lastHF) txt += ` Nach 3 Min gesamt −${lastHF - erh3} bpm.`;
-      erholungSummary.textContent = txt;
-    } else {
-      erholungSummary.textContent = 'Keine Erholungsdaten eingegeben.';
-    }
-
-    const gesamtSummary = document.getElementById('gesamt-summary');
-    const r2hf = +document.getElementById('r2').value;
-    const r4hf = +document.getElementById('r4').value;
-    let gesamt = '';
-    if (r2hf && ga1) {
-      const d = r2hf - ga1;
-      gesamt += Math.abs(d) <= 5
-        ? `✅ GA1-Einheit präzise gesteuert (${r2hf} bpm ≈ Ziel ${ga1} bpm).\n`
-        : d > 5
-          ? `⚠️ GA1-Einheit zu intensiv (+${d} bpm über Ziel). Tempo etwas senken.\n`
-          : `ℹ️ GA1-Einheit unter Ziel (${Math.abs(d)} bpm darunter). Tempo minimal erhöhen.\n`;
-    }
-    if (r4hf && ga12) {
-      const d = r4hf - ga12;
-      gesamt += Math.abs(d) <= 5
-        ? `✅ GA2-Dauerbelastung gut getroffen (${r4hf} bpm ≈ Ziel ${ga12} bpm).\n`
-        : d > 5
-          ? `⚠️ GA2-Block zu intensiv (+${d} bpm). HF-Drift kontrollieren.\n`
-          : `ℹ️ GA2-Block unter Zielpuls (${Math.abs(d)} bpm darunter). Intensität leicht erhöhen.\n`;
-    }
-    if (!gesamt) gesamt = 'Bitte alle Felder ausfüllen für eine detaillierte Bewertung.';
-    gesamtSummary.style.whiteSpace = 'pre-line';
-    gesamtSummary.textContent = gesamt;
-
-    document.getElementById('results').style.display = 'block';
-    setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-  }
-
-  loadAll();
+  // Anti-Spam: E-Mail-Adresse wird erst zur Laufzeit im Browser zusammengebaut.
+  // Kein Crawler/Bot, der nur HTML liest, findet die Adresse.
+  (function() {
+    var u = 'fr';
+    var a = '@';
+    var d = 'nksteyer';
+    var t = '.de';
+    var addr = u + a + d + t;   // "fr" + "@" + "nksteyer" + ".de"
+    var btn = document.getElementById('mailBtn');
+    btn.textContent = addr;
+    window.openMail = function() {
+      window.location.href = 'mailto:' + addr;
+    };
+  })();
 </script>
+
 </body>
 </html>
